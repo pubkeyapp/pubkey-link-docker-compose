@@ -1,0 +1,30 @@
+version: '3'
+services:
+  api:
+    container_name: 'pubkey-link-minimal-api'
+    image: ghcr.io/pubkeyapp/pubkey-link:dev
+    env_file:
+      - ./minimal.env
+    environment:
+      API_URL: http://localhost:3040
+      DATABASE_URL: postgres://pubkey-link:pubkey-link@pubkey-link-minimal-postgres:5432/pubkey-link
+      REDIS_URL: redis://pubkey-link-minimal-redis:6379
+    ports:
+      - '3040:3000'
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    container_name: 'pubkey-link-minimal-postgres'
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: pubkey-link
+      POSTGRES_USER: pubkey-link
+      POSTGRES_PASSWORD: pubkey-link
+    volumes:
+      - ./tmp/postgres:/var/lib/postgresql/data
+  redis:
+    container_name: 'pubkey-link-minimal-redis'
+    image: redis:7-alpine
+    volumes:
+      - ./tmp/redis:/data
